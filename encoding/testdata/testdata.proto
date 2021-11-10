@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package testdata;
+
+option go_package = "github.com/tkeel-io/kit/encoding/testdata;testdata";
+
+message TestData {
+  string a = 1;
+  int32 b = 2;
+  bool c = 3;
+  float d = 4;
+}
