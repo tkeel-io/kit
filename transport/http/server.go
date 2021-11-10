@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/emicklei/go-restful"
+	"github.com/tkeel-io/kit/transport"
 )
 
 const DefaultPort = ":31234"
@@ -30,6 +31,10 @@ func NewServer(addr string) *Server {
 			Handler: c,
 		},
 	}
+}
+
+func (s *Server) Type() transport.Type {
+	return transport.TypeHTTP
 }
 
 func (s *Server) Start(ctx context.Context) error {

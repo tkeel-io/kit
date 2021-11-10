@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/tkeel-io/kit/transport"
 	"google.golang.org/grpc"
 )
 
@@ -27,6 +28,10 @@ func NewServer(addr string) *Server {
 
 func (s *Server) GetServe() *grpc.Server {
 	return s.srv
+}
+
+func (s *Server) Type() transport.Type {
+	return transport.TypeGRPC
 }
 
 func (s *Server) Start(ctx context.Context) error {

@@ -18,6 +18,10 @@ var (
 	globalCodec *codec
 )
 
+func init() {
+	once = new(sync.Once)
+}
+
 type codec struct {
 	encoder *form.Encoder
 	decoder *form.Decoder
