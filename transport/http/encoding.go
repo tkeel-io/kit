@@ -4,7 +4,6 @@ import (
 	"net/url"
 
 	"github.com/emicklei/go-restful"
-	"github.com/gorilla/mux"
 	"github.com/tkeel-io/kit/encoding"
 )
 
@@ -15,10 +14,10 @@ func GetQuery(req *restful.Request, in interface{}) error {
 	return nil
 }
 
-func GetValue(req *restful.Request, in interface{}) error {
-	raws := mux.Vars(req.Request)
-	vars := make(url.Values, len(raws))
-	for k, v := range raws {
+func GetPathValue(req *restful.Request, in interface{}) error {
+	pathValue := req.PathParameters()
+	vars := make(url.Values, len(pathValue))
+	for k, v := range pathValue {
 		vars[k] = []string{v}
 	}
 	if err := encoding.GetCodec().Unmarshal([]byte(vars.Encode()), in); err != nil {

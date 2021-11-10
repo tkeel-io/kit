@@ -4,40 +4,36 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/tkeel-io/kit/transport/grpc"
-	"github.com/tkeel-io/kit/transport/http"
+	"github.com/tkeel-io/kit/transport"
 )
 
 type App struct {
 	Name       string
-	httpServer *http.Server
-	grpcServer *grpc.Server
+	serverList []transport.Server
 }
 
-func New(name, httpAddr, grpcAddr string) *App {
-	return &App{
+func New(name string, srv ...transport.Server) *App {
+	app := &App{
 		Name:       name,
-		httpServer: http.NewServer(httpAddr),
-		grpcServer: grpc.NewServer(grpcAddr),
+		serverList: srv,
 	}
+	return app
 }
 
 func (a *App) Run(ctx context.Context) error {
-	if err := a.grpcServer.Start(ctx); err != nil {
-		return fmt.Errorf("error start grpc: %w", err)
-	}
-	if err := a.httpServer.Start(ctx); err != nil {
-		return fmt.Errorf("error start http: %w", err)
+	for _, v := range a.serverList {
+		if err := v.Start(ctx); err != nil {
+			return fmt.Errorf("error start server(%s): %w", v.Type(), err)
+		}
 	}
 	return nil
 }
 
 func (a *App) Stop(ctx context.Context) error {
-	if err := a.grpcServer.Stop(ctx); err != nil {
-		return fmt.Errorf("error stop grpc: %w", err)
-	}
-	if err := a.httpServer.Stop(ctx); err != nil {
-		return fmt.Errorf("error Stop http: %w", err)
+	for _, v := range a.serverList {
+		if err := v.Stop(ctx); err != nil {
+			return fmt.Errorf("error stop server(%s): %w", v.Type(), err)
+		}
 	}
 	return nil
 }
