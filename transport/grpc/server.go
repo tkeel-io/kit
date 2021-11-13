@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/tkeel-io/kit/log"
 	"github.com/tkeel-io/kit/transport"
 	"google.golang.org/grpc"
 )
@@ -39,11 +40,11 @@ func (s *Server) Start(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("error listen addr: %w", err)
 	}
-	go func() error {
+	log.Debugf("GRPC Server listen: %s", s.Addr)
+	go func() {
 		if err := s.srv.Serve(l); err != nil {
-			return fmt.Errorf("error http serve: %w", err)
+			log.Errorf("error http serve: %w", err)
 		}
-		return nil
 	}()
 	return nil
 }

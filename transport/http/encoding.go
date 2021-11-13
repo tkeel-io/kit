@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/url"
 
 	"github.com/emicklei/go-restful"
@@ -9,7 +10,7 @@ import (
 
 func GetQuery(req *restful.Request, in interface{}) error {
 	if err := encoding.GetCodec().Unmarshal([]byte(req.Request.URL.Query().Encode()), in); err != nil {
-		return err
+		return fmt.Errorf("error get query encoding unmarshal: %w", err)
 	}
 	return nil
 }
@@ -21,11 +22,14 @@ func GetPathValue(req *restful.Request, in interface{}) error {
 		vars[k] = []string{v}
 	}
 	if err := encoding.GetCodec().Unmarshal([]byte(vars.Encode()), in); err != nil {
-		return err
+		return fmt.Errorf("error get path value encoding unmarshal: %w", err)
 	}
 	return nil
 }
 
 func GetBody(req *restful.Request, in interface{}) error {
-	return req.ReadEntity(in)
+	if err := req.ReadEntity(in); err != nil {
+		return fmt.Errorf("error get body read entity: %w", err)
+	}
+	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/tkeel-io/kit/log"
 	"github.com/tkeel-io/kit/transport"
 )
 
@@ -12,7 +13,10 @@ type App struct {
 	serverList []transport.Server
 }
 
-func New(name string, srv ...transport.Server) *App {
+func New(name string, conf *log.Conf, srv ...transport.Server) *App {
+	if err := log.InitLoggerByConf(conf); err != nil {
+		panic(err)
+	}
 	app := &App{
 		Name:       name,
 		serverList: srv,
@@ -26,6 +30,7 @@ func (a *App) Run(ctx context.Context) error {
 			return fmt.Errorf("error start server(%s): %w", v.Type(), err)
 		}
 	}
+	log.Infof("app %s running", a.Name)
 	return nil
 }
 
