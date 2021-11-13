@@ -29,18 +29,18 @@ func (h *{{$svrType}}HTTPHandler) {{.Name}}(req *go_restful.Request, resp *go_re
 	in := &{{.Request}}{}
 
 	{{- if .HasBody}}
-	if err := transportHTTP.GetBody(req, &in); err != nil {
+	if err := transportHTTP.GetBody(req, in); err != nil {
 		resp.WriteErrorString(http.StatusBadRequest, err.Error())
 		return
 	}
 	{{- else}}
-	if err := transportHTTP.GetQuery(req, &in); err != nil {
+	if err := transportHTTP.GetQuery(req, in); err != nil {
 		resp.WriteErrorString(http.StatusBadRequest, err.Error())
 		return
 	}
 	{{- end}}
 	{{- if .HasVars}}
-	if err := transportHTTP.GetPathValue(req, &in); err != nil {
+	if err := transportHTTP.GetPathValue(req, in); err != nil {
 		resp.WriteErrorString(http.StatusBadRequest, err.Error())
 		return
 	}
@@ -67,18 +67,26 @@ func (h *{{$svrType}}HTTPHandler) {{.Name}}(req *go_restful.Request, resp *go_re
 {{- end}}
 
 func Register{{.ServiceType}}HTTPServer(container *go_restful.Container, srv {{.ServiceType}}HTTPServer) {
-	handler := new{{.ServiceType}}HTTPHandler(srv)
+	var ws *go_restful.WebService
+	for _, v := range container.RegisteredWebServices() {
+		if v.RootPath() == "/{{.ServiceVersion}}" {
+			ws = v
+			break
+		}
+	}
+	if ws == nil {
+		ws = new(go_restful.WebService)
+		ws.ApiVersion("/{{.ServiceVersion}}")
+		ws.Path("/{{.ServiceVersion}}").Produces(go_restful.MIME_JSON)
+		container.Add(ws)
+	}
 
-	ws := new(go_restful.WebService)
-	ws.ApiVersion("{{.ServiceVersion}}")
-	ws.Path("/{{.ServiceVersion}}").Produces(go_restful.MIME_JSON)
+	handler := new{{.ServiceType}}HTTPHandler(srv)
 
 	{{- range .Methods}}
 	ws.Route(ws.{{.Method}}("{{.Path}}").
 		To(handler.{{.Name}}))
 	{{- end}}
-
-	container.Add(ws)
 }
 `
 

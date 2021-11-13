@@ -2,10 +2,10 @@ package http
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/emicklei/go-restful"
+	"github.com/tkeel-io/kit/log"
 	"github.com/tkeel-io/kit/transport"
 )
 
@@ -23,6 +23,8 @@ func NewServer(addr string) *Server {
 		addr = DefaultPort
 	}
 	c := restful.NewContainer()
+	restful.RegisterEntityAccessor("application/x-www-form-urlencoded", FormEntityReadWriter{})
+	c.EnableContentEncoding(true)
 	return &Server{
 		Addr:      addr,
 		Container: c,
@@ -38,11 +40,11 @@ func (s *Server) Type() transport.Type {
 }
 
 func (s *Server) Start(ctx context.Context) error {
-	go func() error {
+	log.Debugf("HTTP Server listen: %s", s.Addr)
+	go func() {
 		if err := s.srv.ListenAndServe(); err != nil {
-			return fmt.Errorf("error http serve: %w", err)
+			log.Errorf("error http serve: %w", err)
 		}
-		return nil
 	}()
 	return nil
 }
