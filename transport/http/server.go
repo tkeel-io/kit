@@ -9,6 +9,10 @@ import (
 	"github.com/tkeel-io/kit/transport"
 )
 
+const (
+	ImportAndUsed = true
+)
+
 const DefaultPort = ":31234"
 
 type Server struct {
