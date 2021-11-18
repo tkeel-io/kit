@@ -47,7 +47,7 @@ func (s *Server) Start(ctx context.Context) error {
 	log.Debugf("HTTP Server listen: %s", s.Addr)
 	go func() {
 		if err := s.srv.ListenAndServe(); err != nil {
-			log.Errorf("error http serve: %w", err)
+			log.Errorf("error http serve: %s", err)
 		}
 	}()
 	return nil
