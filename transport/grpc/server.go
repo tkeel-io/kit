@@ -43,7 +43,7 @@ func (s *Server) Start(ctx context.Context) error {
 	log.Debugf("GRPC Server listen: %s", s.Addr)
 	go func() {
 		if err := s.srv.Serve(l); err != nil {
-			log.Errorf("error http serve: %w", err)
+			log.Errorf("error http serve: %s", err)
 		}
 	}()
 	return nil

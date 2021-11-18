@@ -16,6 +16,7 @@ package log
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -49,6 +50,11 @@ func InitLogger(app string, level string, dev bool, output ...string) error {
 	if c.InitialFields == nil {
 		c.InitialFields = make(map[string]interface{})
 	}
+	customTimeEncoder := func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
+		enc.AppendString(t.Format(time.RFC3339))
+	}
+	c.EncoderConfig.TimeKey = "t"
+	c.EncoderConfig.EncodeTime = customTimeEncoder
 	c.InitialFields["app"] = app
 	c.OutputPaths = append(c.OutputPaths, output...)
 	logger, err := c.Build(zap.AddCallerSkip(1),
