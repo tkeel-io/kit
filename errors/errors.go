@@ -86,7 +86,7 @@ func New(code int, reason, message string) *TError {
 
 // ToHTTPStatusCode Get equivalent HTTP status code from x.Code
 func (x *TError) ToHTTPStatusCode() int {
-	return GrpcToHTTPStatusCode(codes.Code(x.Code))
+	return GRPCToHTTPStatusCode(codes.Code(x.Code))
 }
 
 // FromError try to convert an error to *Error.

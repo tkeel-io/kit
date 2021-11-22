@@ -29,7 +29,7 @@ func Convert(err error) *status.Status {
 	return status.New(codes.Unknown, err.Error())
 }
 
-func GrpcToHTTPStatusCode(statusCode codes.Code) int {
+func GRPCToHTTPStatusCode(statusCode codes.Code) int {
 	switch statusCode {
 	case codes.OK:
 		return http.StatusOK
