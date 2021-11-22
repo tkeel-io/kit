@@ -5,13 +5,17 @@ import (
 	"net/http"
 )
 
-const ContextHTTPHeaderKey = "http_header"
+var contextHTTPHeaderKey = struct{}{}
 
-func GetHeader(ctx context.Context) http.Header {
+func HeaderFromContext(ctx context.Context) http.Header {
 	h := ctx.Value(ContextHTTPHeaderKey)
 	header, ok := h.(http.Header)
 	if !ok {
 		return nil
 	}
 	return header
+}
+
+func ContextWithHeader(ctx context.Context, h http.Header) context.Context {
+	return context.WithValue(ctx, contextHTTPHeaderKey, h)
 }
