@@ -8,7 +8,7 @@ import (
 var contextHTTPHeaderKey = struct{}{}
 
 func HeaderFromContext(ctx context.Context) http.Header {
-	h := ctx.Value(ContextHTTPHeaderKey)
+	h := ctx.Value(contextHTTPHeaderKey)
 	header, ok := h.(http.Header)
 	if !ok {
 		return nil
