@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package tkeel.http.result;
+
+import "google/protobuf/any.proto";
+
+option go_package = "github.com/tkeel-io/kit/result;result";
+
+message Http {
+  int32 code = 1;
+  string msg = 2;
+  google.protobuf.Any data = 3;
+}
