@@ -2,6 +2,7 @@ package http
 
 import (
 	"fmt"
+	"io"
 	"net/url"
 
 	"github.com/emicklei/go-restful"
@@ -32,4 +33,13 @@ func GetBody(req *restful.Request, in interface{}) error {
 		return fmt.Errorf("error get body read entity: %w", err)
 	}
 	return nil
+}
+
+func readBody(req *restful.Request) ([]byte, error) {
+	b, err := io.ReadAll(req.Request.Body)
+	defer req.Request.Body.Close()
+	if err != nil {
+		return nil, fmt.Errorf("error read request body: %w", err)
+	}
+	return b, nil
 }
