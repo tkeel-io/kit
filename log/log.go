@@ -23,10 +23,11 @@ import (
 )
 
 type Conf struct {
-	App    string
-	Level  string
-	Dev    bool
-	Output []string
+	App      string
+	Level    string
+	Dev      bool
+	Output   []string
+	Encoding string
 }
 
 var resetGlobalFunc func()
@@ -40,12 +41,11 @@ func ResetGlobalLogger() {
 
 // InitLogger create new zap logger and sugared logger.
 // replace global logger.
-func InitLogger(app string, level string, dev bool, output ...string) error {
+func InitLogger(app string, level string, dev bool, encoding string, output ...string) error {
 	c := zap.NewProductionConfig()
 	c.Development = dev
-	if dev {
-		c.Encoding = "console"
-	}
+
+	c.Encoding = encoding
 	c.Level = getLevel(level)
 	if c.InitialFields == nil {
 		c.InitialFields = make(map[string]interface{})
@@ -67,7 +67,7 @@ func InitLogger(app string, level string, dev bool, output ...string) error {
 }
 
 func InitLoggerByConf(c *Conf) error {
-	if err := InitLogger(c.App, c.Level, c.Dev, c.Output...); err != nil {
+	if err := InitLogger(c.App, c.Level, c.Dev, c.Encoding, c.Output...); err != nil {
 		return fmt.Errorf("error init logger: %w", err)
 	}
 	return nil
@@ -176,7 +176,6 @@ func Fatalf(templateStr string, args ...interface{}) {
 func Fatalw(msg string, keysAndValues ...interface{}) {
 	zap.S().Fatalw(msg, keysAndValues...)
 }
-
 
 func Check(lvl zapcore.Level, msg string) *zapcore.CheckedEntry {
 	return zap.L().Check(lvl, msg)
