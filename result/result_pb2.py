@@ -15,7 +15,7 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import any_pb2 as google_dot_protobuf_dot_any__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13result/result.proto\x12\x11tkeel.http.result\x1a\x19google/protobuf/any.proto\"E\n\x04Http\x12\x0c\n\x04\x63ode\x18\x01 \x01(\x05\x12\x0b\n\x03msg\x18\x02 \x01(\t\x12\"\n\x04\x64\x61ta\x18\x03 \x01(\x0b\x32\x14.google.protobuf.AnyB\'Z%github.com/tkeel-io/kit/result;resultb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13result/result.proto\x12\x11tkeel.http.result\x1a\x19google/protobuf/any.proto\"E\n\x04Http\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x0b\n\x03msg\x18\x02 \x01(\t\x12\"\n\x04\x64\x61ta\x18\x03 \x01(\x0b\x32\x14.google.protobuf.AnyB\'Z%github.com/tkeel-io/kit/result;resultb\x06proto3')
 
 
 
