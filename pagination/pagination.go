@@ -15,7 +15,6 @@ var (
 	ErrInvalidSearchKey    = errors.New("invalid search key")
 	ErrInvalidIsDescending = errors.New("invalid is descending")
 	ErrInvalidParseData    = errors.New("invalid data type parsing")
-	ErrNoPageInfo          = errors.New("no page info")
 	ErrInvalidResponse     = errors.New("invalid response")
 	ErrNoTotal             = errors.New("no total data")
 )

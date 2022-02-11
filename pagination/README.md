@@ -132,43 +132,53 @@ func (p Page) SearchCondition() (map[string]string, []string) {
 ## func FillResponse
 Automatic padding of paginated data to match paginated responsive design.
 ```go
-func (p Page) FillResponse(resp interface{}, total int) error {
-	t := reflect.TypeOf(resp)
-	v := reflect.ValueOf(resp)
-	for t.Kind() != reflect.Struct {
-		switch t.Kind() {
-		case reflect.Ptr:
-			v = v.Elem()
-			t = t.Elem()
-		default:
-			return ErrInvalidResponse
-		}
-	}
 
-	for i := 0; i < v.NumField(); i++ {
-		if v.Field(i).CanInterface() {
-			switch t.Field(i).Name {
-			case "Total":
-				v.Field(i).SetUint(uint64(total))
-			case "PageNum":
-				v.Field(i).SetUint(uint64(p.Num))
-			case "LastPage":
-				if p.Size == 0 {
-					v.Field(i).SetUint(uint64(0))
-					continue
-				}
-				lastPage := total / int(p.Size)
-				if total%int(p.Size) == 0 {
-					v.Field(i).SetUint(uint64(lastPage))
-					continue
-				}
-				v.Field(i).SetUint(uint64(lastPage + 1))
+func (p Page) FillResponse(resp interface{}) error {
+    if p.Total == 0 {
+        return ErrNoTotal
+    }
 
-			case "PageSize":
-				v.Field(i).SetUint(uint64(p.Size))
-			}
-		}
-	}
-	return nil
+    t := reflect.TypeOf(resp)
+    v := reflect.ValueOf(resp)
+    for t.Kind() != reflect.Struct {
+        switch t.Kind() {
+        case reflect.Ptr:
+            v = v.Elem()
+            t = t.Elem()
+        default:
+            return ErrInvalidResponse
+        }
+    }
+
+    for i := 0; i < v.NumField(); i++ {
+        if v.Field(i).CanInterface() {
+            switch t.Field(i).Name {
+            case "Total":
+                v.Field(i).SetUint(uint64(p.Total))
+            case "PageNum":
+                v.Field(i).SetUint(uint64(p.Num))
+            case "LastPage":
+                if p.Size == 0 {
+                    v.Field(i).SetUint(uint64(0))
+                    continue
+                }
+                lastPage := p.Total / p.Size
+                if p.Total%p.Size == 0 {
+                    v.Field(i).SetUint(uint64(lastPage))
+                    continue
+                }
+                v.Field(i).SetUint(uint64(lastPage + 1))
+				
+            case "PageSize":
+                if p.Size == 0 {
+                    v.Field(i).SetUint(uint64(p.Total))
+                    continue
+                }
+                v.Field(i).SetUint(uint64(p.Size))
+            }
+        }
+    }
+    return nil
 }
+
 ```
