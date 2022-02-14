@@ -69,3 +69,6 @@ func GRPCToHTTPStatusCode(statusCode codes.Code) int {
 		return http.StatusInternalServerError
 	}
 }
+
+var InternalError = New(int(codes.Internal), "io.tkeel.INTERNAL_ERROR", "")
+var Success = New(int(codes.OK), "io.tkeel.SUCCESS", "")
