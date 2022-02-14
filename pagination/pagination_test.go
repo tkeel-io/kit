@@ -8,8 +8,8 @@ import (
 )
 
 type testRequest struct {
-	PageNum      uint
-	PageSize     uint
+	PageNum      int32
+	PageSize     int32
 	OrderBy      string
 	IsDescending bool
 	KeyWords     string
@@ -183,7 +183,7 @@ func TestPage_Limit(t *testing.T) {
 	tests := []struct {
 		name     string
 		req      ListRequest
-		excepted uint32
+		excepted int32
 	}{
 		{
 			name:     "test limit",

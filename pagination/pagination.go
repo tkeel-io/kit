@@ -20,14 +20,14 @@ var (
 )
 
 type Page struct {
-	Num              uint
-	Size             uint
+	Num              int32
+	Size             int32
 	OrderBy          string
 	IsDescending     bool
 	KeyWords         string
 	SearchKey        string
 	Total            uint
-	defaultSize      uint
+	defaultSize      int32
 	defaultSeparator string
 }
 
@@ -38,13 +38,13 @@ func (p Page) Offset() uint32 {
 	return uint32((p.Num - 1) * p.Size)
 }
 
-func (p Page) Limit() uint32 {
+func (p Page) Limit() int32 {
 	if p.Size != 0 {
-		return uint32(p.Size)
+		return p.Size
 	}
 
 	if p.Num != 0 {
-		return uint32(p.defaultSize)
+		return p.defaultSize
 	}
 
 	return 0
@@ -115,14 +115,14 @@ func (p Page) FillResponse(resp interface{}) error {
 			case "Total":
 				v.Field(i).SetUint(uint64(p.Total))
 			case "PageNum":
-				v.Field(i).SetUint(uint64(p.Num))
+				v.Field(i).SetInt(int64(p.Num))
 			case "LastPage":
-				if p.Size == 0 {
-					v.Field(i).SetUint(uint64(0))
+				if p.Size <= 0 {
+					v.Field(i).SetUint(0)
 					continue
 				}
-				lastPage := p.Total / p.Size
-				if p.Total%p.Size == 0 {
+				lastPage := p.Total / uint(p.Size)
+				if p.Total%uint(p.Size) == 0 {
 					v.Field(i).SetUint(uint64(lastPage))
 					continue
 				}
@@ -130,10 +130,10 @@ func (p Page) FillResponse(resp interface{}) error {
 
 			case "PageSize":
 				if p.Size == 0 {
-					v.Field(i).SetUint(uint64(p.Total))
+					v.Field(i).SetInt(int64(p.Total))
 					continue
 				}
-				v.Field(i).SetUint(uint64(p.Size))
+				v.Field(i).SetInt(int64(p.Size))
 			}
 		}
 	}
@@ -170,30 +170,14 @@ func Parse(req interface{}, options ...Option) (Page, error) {
 		if v.Field(i).CanInterface() {
 			switch t.Field(i).Name {
 			case "PageNum":
-				if val, ok := v.Field(i).Interface().(uint); ok {
+				if val, ok := v.Field(i).Interface().(int32); ok {
 					q.Num = val
-					continue
-				}
-				if val, ok := v.Field(i).Interface().(uint32); ok {
-					q.Num = uint(val)
-					continue
-				}
-				if val, ok := v.Field(i).Interface().(uint64); ok {
-					q.Num = uint(val)
 					continue
 				}
 				return q, ErrInvalidPageNum
 			case "PageSize":
-				if val, ok := v.Field(i).Interface().(uint); ok {
+				if val, ok := v.Field(i).Interface().(int32); ok {
 					q.Size = val
-					continue
-				}
-				if val, ok := v.Field(i).Interface().(uint32); ok {
-					q.Size = uint(val)
-					continue
-				}
-				if val, ok := v.Field(i).Interface().(uint64); ok {
-					q.Size = uint(val)
 					continue
 				}
 				return q, ErrInvalidPageSize
@@ -234,7 +218,7 @@ func Parse(req interface{}, options ...Option) (Page, error) {
 	return q, nil
 }
 
-func WithDefaultSize(size uint) Option {
+func WithDefaultSize(size int32) Option {
 	return func(p *Page) error {
 		p.defaultSize = size
 		return nil

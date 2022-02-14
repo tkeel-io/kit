@@ -6,12 +6,12 @@ import "protoc-gen-openapiv2/options/annotations.proto";
 import "google/api/field_behavior.proto";
 
 message ListRequest{
-	uint64 page_num = 1
+	int32 page_num = 1
 		[(google.api.field_behavior) = REQUIRED,
 			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
 			description: "Page number",
 		}];
-	uint64 page_size = 2
+	int32 page_size = 2
 		[(google.api.field_behavior) = REQUIRED,
 			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
 			description: "Page size",
@@ -50,7 +50,7 @@ message ListResponse {
 			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
 			description: "Total",
 			}];
-	uint64 page_num = 2
+	int32 page_num = 2
 		[(google.api.field_behavior) = REQUIRED,
 			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
 			description: "Page number",
@@ -60,7 +60,7 @@ message ListResponse {
 				(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
 				description: "Last page",
 				}];
-	uint64 page_size = 4
+	int32 page_size = 4
 		[(google.api.field_behavior) = REQUIRED,
 			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
 			description: "Page size",
