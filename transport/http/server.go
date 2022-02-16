@@ -29,6 +29,8 @@ func NewServer(addr string) *Server {
 	c := restful.NewContainer()
 	restful.RegisterEntityAccessor("application/x-www-form-urlencoded", FormEntityReadWriter{})
 	c.EnableContentEncoding(true)
+	restful.TraceLogger(&httpLog{})
+	restful.SetLogger(&httpLog{})
 	return &Server{
 		Addr:      addr,
 		Container: c,
@@ -55,4 +57,14 @@ func (s *Server) Start(ctx context.Context) error {
 
 func (s *Server) Stop(ctx context.Context) error {
 	return s.srv.Shutdown(ctx)
+}
+
+type httpLog struct{}
+
+func (t *httpLog) Print(v ...interface{}) {
+	log.Debug(v...)
+}
+
+func (t *httpLog) Printf(format string, v ...interface{}) {
+	log.Debugf(format, v...)
 }
