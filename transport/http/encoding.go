@@ -29,6 +29,9 @@ func GetPathValue(req *restful.Request, in interface{}) error {
 }
 
 func GetBody(req *restful.Request, in interface{}) error {
+	if req.Request.ContentLength == 0 {
+		return nil
+	}
 	if err := req.ReadEntity(in); err != nil {
 		return fmt.Errorf("error get body read entity: %w", err)
 	}
