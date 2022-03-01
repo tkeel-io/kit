@@ -13,10 +13,13 @@ import (
 )
 
 const (
-	_AuthTokenURL string = "http://192.168.123.9:30707/apis/security/v1/oauth/authenticate"
-	//_AuthTokenURL  string = "http://localhost:3500/v1.0/invoke/keel/method/apis/security/v1/oauth/authenticate"
+	AuthTokenURLTestRemote string = "http://192.168.123.9:30707/apis/security/v1/oauth/authenticate"
+	AuthTokenURLInvoke     string = "http://localhost:3500/v1.0/invoke/keel/method/apis/security/v1/oauth/authenticate"
+
 	_Authorization string = "Authorization"
 )
+
+var _auth = AuthTokenURLInvoke
 
 type User struct {
 	ID       string `json:"id"`
@@ -24,7 +27,11 @@ type User struct {
 	Token    string `json:"token"`
 }
 
-func Authenticate(token interface{}) (*User, error) {
+func Authenticate(token interface{}, urls ...string) (*User, error) {
+	if len(urls) > 0 {
+		_auth = urls[0]
+	}
+
 	tokenStr := ""
 	switch t := token.(type) {
 	case string:
@@ -42,7 +49,7 @@ func Authenticate(token interface{}) (*User, error) {
 		return nil, errors.New("token is empty")
 	}
 
-	req, err := http.NewRequest("GET", _AuthTokenURL, nil)
+	req, err := http.NewRequest("GET", _auth, nil)
 	if nil != err {
 		return nil, err
 	}
