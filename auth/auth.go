@@ -3,18 +3,19 @@ package auth
 import (
 	"context"
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
+
 	"github.com/pkg/errors"
 	"github.com/tkeel-io/kit"
 	"github.com/tkeel-io/kit/log"
 	transportHTTP "github.com/tkeel-io/kit/transport/http"
-	"io/ioutil"
-	"net/http"
 )
 
 const (
-	//  authUrl string = "http://192.168.123.11:30707/apis/security"
+	//_AuthTokenURL string = "http://192.168.123.11:30707/apis/security/v1/oauth/authenticate"
 	_AuthTokenURL  string = "http://localhost:3500/v1.0/invoke/keel/method/apis/security/v1/oauth/authenticate"
-	_Authorization string = "Authorization"
+	_Authorization string = "Authenticate"
 )
 
 type User struct {
@@ -23,7 +24,7 @@ type User struct {
 	Token    string `json:"token"`
 }
 
-func Authorization(token interface{}) (*User, error) {
+func Authenticate(token interface{}) (*User, error) {
 	tokenStr := ""
 	switch t := token.(type) {
 	case string:
@@ -31,7 +32,7 @@ func Authorization(token interface{}) (*User, error) {
 	case context.Context:
 		val, ok := transportHTTP.HeaderFromContext(t)[_Authorization]
 		if !ok || len(tokenStr) == 0 {
-			return nil, errors.New("invalid Authorization")
+			return nil, errors.New("invalid Authenticate")
 		}
 		tokenStr = val[0]
 	default:
