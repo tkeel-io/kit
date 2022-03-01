@@ -13,9 +13,9 @@ import (
 )
 
 const (
-	//_AuthTokenURL string = "http://192.168.123.11:30707/apis/security/v1/oauth/authenticate"
-	_AuthTokenURL  string = "http://localhost:3500/v1.0/invoke/keel/method/apis/security/v1/oauth/authenticate"
-	_Authorization string = "Authenticate"
+	_AuthTokenURL string = "http://192.168.123.9:30707/apis/security/v1/oauth/authenticate"
+	//_AuthTokenURL  string = "http://localhost:3500/v1.0/invoke/keel/method/apis/security/v1/oauth/authenticate"
+	_Authorization string = "Authorization"
 )
 
 type User struct {
@@ -65,7 +65,7 @@ func Authenticate(token interface{}) (*User, error) {
 		return nil, err
 	}
 
-	if response.Code == "io.tkeel.SUCCESS" {
+	if response.Code != "io.tkeel.SUCCESS" {
 		return nil, errors.New(response.Msg)
 	}
 
