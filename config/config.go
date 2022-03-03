@@ -1,4 +1,4 @@
-package kubernetes
+package config
 
 type InstallConfig struct {
 	Namespace  string      `json:"namespace" yaml:"namespace"`
