@@ -64,11 +64,21 @@ func GRPCToHTTPStatusCode(statusCode codes.Code) int {
 	case codes.Unavailable:
 		return http.StatusServiceUnavailable
 	case codes.DataLoss:
-		return http.StatusInternalServerError
+		return http.StatusMovedPermanently
 	default:
 		return http.StatusInternalServerError
 	}
 }
 
-var InternalError = New(int(codes.Internal), "io.tkeel.INTERNAL_ERROR", "")
-var Success = New(int(codes.OK), "io.tkeel.SUCCESS", "")
+const (
+	SUCCESS_CODE  = "io.tkeel.INTERNAL_ERROR"
+	INTERNAL_CODE = "io.tkeel.SUCCESS"
+	REDIRECT_CODE = "io.tkeel.REDIRECT"
+)
+
+var InternalError = New(int(codes.Internal), INTERNAL_CODE, "")
+var Success = New(int(codes.OK), SUCCESS_CODE, "")
+
+func NewRedirect(location string) *TError {
+	return New(int(codes.DataLoss), REDIRECT_CODE, location)
+}
