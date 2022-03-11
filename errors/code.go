@@ -71,8 +71,8 @@ func GRPCToHTTPStatusCode(statusCode codes.Code) int {
 }
 
 const (
-	SUCCESS_CODE  = "io.tkeel.INTERNAL_ERROR"
-	INTERNAL_CODE = "io.tkeel.SUCCESS"
+	SUCCESS_CODE  = "io.tkeel.SUCCESS"
+	INTERNAL_CODE = "io.tkeel.INTERNAL_ERROR"
 	REDIRECT_CODE = "io.tkeel.REDIRECT"
 )
 
