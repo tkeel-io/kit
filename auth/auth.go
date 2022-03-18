@@ -30,9 +30,10 @@ var (
 )
 
 type User struct {
-	ID    string `json:"id"`
-	Role  string `json:"role"`
-	Token string `json:"token"`
+	ID     string `json:"id"`
+	Role   string `json:"role"`
+	Tenant string `json:"tenant"`
+	Token  string `json:"token"`
 }
 
 type Authorization struct {
@@ -133,6 +134,7 @@ func GetUser(ctx context.Context) (User, error) {
 	}
 	u.ID = q.Get("user")
 	u.Role = q.Get("role")
+	u.Tenant = q.Get("tenant")
 	token, ok := headers[_Authorization]
 	if ok {
 		u.Token = strings.Join(token, "")
