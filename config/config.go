@@ -6,6 +6,7 @@ type InstallConfig struct {
 	Host       *Host       `json:"host" yaml:"host"`
 	Port       string      `json:"port" yaml:"port"`
 	Middleware *Middleware `json:"middleware" yaml:"middleware"`
+	Plugins    []string    `json:"plugins" yaml:"plugins"`
 }
 
 type Repo struct {
