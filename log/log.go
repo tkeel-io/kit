@@ -177,7 +177,10 @@ func Fatalw(msg string, keysAndValues ...interface{}) {
 	zap.S().Fatalw(msg, keysAndValues...)
 }
 
-
 func Check(lvl zapcore.Level, msg string) *zapcore.CheckedEntry {
 	return zap.L().Check(lvl, msg)
+}
+
+func L() *zap.Logger {
+	return zap.L()
 }
