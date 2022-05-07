@@ -57,7 +57,7 @@ func InitLogger(app string, level string, dev bool, output ...string) error {
 	c.EncoderConfig.EncodeTime = customTimeEncoder
 	c.InitialFields["app"] = app
 	c.OutputPaths = append(c.OutputPaths, output...)
-	logger, err := c.Build(zap.AddCallerSkip(1),
+	logger, err := c.Build(zap.AddCallerSkip(0),
 		zap.AddStacktrace(zap.DPanicLevel))
 	if err != nil {
 		return fmt.Errorf("error build zap log: %w", err)
