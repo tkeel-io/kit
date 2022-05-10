@@ -23,33 +23,34 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-func NewStructValue(cc *tdtl.Collect) *structpb.Value {
+func NewStructValue(cc *tdtl.Collect) (*structpb.Value, error) {
 	switch cc.Type() {
 	case tdtl.Bool:
 		ret := cc.To(tdtl.Bool)
 		switch ret := ret.(type) {
 		case tdtl.BoolNode:
-			return structpb.NewBoolValue(bool(ret))
+			return structpb.NewBoolValue(bool(ret)), nil
 		}
 	case tdtl.Int, tdtl.Float, tdtl.Number:
 		ret := cc.To(tdtl.Number)
 		switch ret := ret.(type) {
 		case tdtl.IntNode:
-			return structpb.NewNumberValue(float64(ret))
+			return structpb.NewNumberValue(float64(ret)), nil
 		case tdtl.FloatNode:
-			return structpb.NewNumberValue(float64(ret))
+			return structpb.NewNumberValue(float64(ret)), nil
 		}
 	case tdtl.String:
-		return structpb.NewStringValue(cc.String())
+		return structpb.NewStringValue(cc.String()), nil
 	case tdtl.JSON, tdtl.Object, tdtl.Array:
 		ret := &structpb.Struct{}
 		err := json.Unmarshal(cc.Raw(), ret)
 		if err != nil {
 			fmt.Println("err", err)
+			return structpb.NewBoolValue(false), err
 		}
-		return structpb.NewStructValue(ret)
+		return structpb.NewStructValue(ret), nil
 	}
-	return structpb.NewBoolValue(false)
+	return structpb.NewBoolValue(false), fmt.Errorf("unknown type")
 }
 
 func NewCollectValue(val *structpb.Value) (*tdtl.Collect, error) {
