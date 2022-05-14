@@ -16,10 +16,17 @@ package log
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+)
+
+var (
+	_globalMu sync.RWMutex
+	_globalL  = zap.NewNop()
+	_globalS  = _globalL.Sugar()
 )
 
 type Conf struct {
@@ -57,12 +64,20 @@ func InitLogger(app string, level string, dev bool, output ...string) error {
 	c.EncoderConfig.EncodeTime = customTimeEncoder
 	c.InitialFields["app"] = app
 	c.OutputPaths = append(c.OutputPaths, output...)
-	logger, err := c.Build(zap.AddCallerSkip(0),
+	loggerSkip1, err := c.Build(zap.AddCallerSkip(1),
 		zap.AddStacktrace(zap.DPanicLevel))
 	if err != nil {
 		return fmt.Errorf("error build zap log: %w", err)
 	}
-	resetGlobalFunc = zap.ReplaceGlobals(logger)
+	loggerSkip2, err := c.Build(zap.AddCallerSkip(0),
+		zap.AddStacktrace(zap.DPanicLevel))
+	if err != nil {
+		return fmt.Errorf("error build zap log: %w", err)
+	}
+	_globalMu.Lock()
+	_globalL = loggerSkip2
+	_globalS = loggerSkip1.Sugar()
+	_globalMu.Unlock()
 	return nil
 }
 
@@ -94,93 +109,106 @@ func getLevel(level string) zap.AtomicLevel {
 }
 
 func Debug(args ...interface{}) {
-	zap.S().Debug(args...)
+	_globalS.Debug(args...)
+}
+
+func Debug2(args ...interface{}) {
+	_globalS.Debug(args...)
 }
 
 func Debugf(templateStr string, args ...interface{}) {
-	zap.S().Debugf(templateStr, args...)
+	S().Debugf(templateStr, args...)
 }
 
 func Debugw(msg string, keysAndValues ...interface{}) {
-	zap.S().Debugw(msg, keysAndValues...)
+	S().Debugw(msg, keysAndValues...)
 }
 
 func Info(args ...interface{}) {
-	zap.S().Info(args...)
+	S().Info(args...)
 }
 
 func Infof(templateStr string, args ...interface{}) {
-	zap.S().Infof(templateStr, args...)
+	S().Infof(templateStr, args...)
 }
 
 func Infow(msg string, keysAndValues ...interface{}) {
-	zap.S().Infow(msg, keysAndValues...)
+	S().Infow(msg, keysAndValues...)
 }
 
 func Warn(args ...interface{}) {
-	zap.S().Warn(args...)
+	S().Warn(args...)
 }
 
 func Warnf(templateStr string, args ...interface{}) {
-	zap.S().Warnf(templateStr, args...)
+	S().Warnf(templateStr, args...)
 }
 
 func Warnw(msg string, keysAndValues ...interface{}) {
-	zap.S().Warnw(msg, keysAndValues...)
+	S().Warnw(msg, keysAndValues...)
 }
 
 func Error(args ...interface{}) {
-	zap.S().Error(args...)
+	S().Error(args...)
 }
 
 func Errorf(templateStr string, args ...interface{}) {
-	zap.S().Errorf(templateStr, args...)
+	S().Errorf(templateStr, args...)
 }
 
 func Errorw(msg string, keysAndValues ...interface{}) {
-	zap.S().Errorw(msg, keysAndValues...)
+	S().Errorw(msg, keysAndValues...)
 }
 
 func DPanic(args ...interface{}) {
-	zap.S().DPanic(args...)
+	S().DPanic(args...)
 }
 
 func DPanicf(templateStr string, args ...interface{}) {
-	zap.S().DPanicf(templateStr, args...)
+	S().DPanicf(templateStr, args...)
 }
 
 func DPanicw(msg string, keysAndValues ...interface{}) {
-	zap.S().DPanicw(msg, keysAndValues...)
+	S().DPanicw(msg, keysAndValues...)
 }
 
 func Panic(args ...interface{}) {
-	zap.S().Panic(args...)
+	S().Panic(args...)
 }
 
 func Panicf(templateStr string, args ...interface{}) {
-	zap.S().Panicf(templateStr, args...)
+	S().Panicf(templateStr, args...)
 }
 
 func Panicw(msg string, keysAndValues ...interface{}) {
-	zap.S().Panicw(msg, keysAndValues...)
+	S().Panicw(msg, keysAndValues...)
 }
 
 func Fatal(args ...interface{}) {
-	zap.S().Fatal(args...)
+	S().Fatal(args...)
 }
 
 func Fatalf(templateStr string, args ...interface{}) {
-	zap.S().Fatalf(templateStr, args...)
+	S().Fatalf(templateStr, args...)
 }
 
 func Fatalw(msg string, keysAndValues ...interface{}) {
-	zap.S().Fatalw(msg, keysAndValues...)
+	S().Fatalw(msg, keysAndValues...)
 }
 
 func Check(lvl zapcore.Level, msg string) *zapcore.CheckedEntry {
 	return zap.L().Check(lvl, msg)
 }
 
+func Sync() {
+	_globalS.Sync()
+	_globalL.Sync()
+}
+
 func L() *zap.Logger {
-	return zap.L()
+	return _globalL
+}
+
+func S() *zap.SugaredLogger {
+	return _globalS
 }

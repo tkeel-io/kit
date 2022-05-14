@@ -31,9 +31,15 @@ func c() {
 }
 
 func ExampleL() {
-	InitLogger("app", "debug", false)
+	InitLogger("app", "debug", false, "stdio")
+	defer L().Sync()
 	L().Debug("main")
 	a()
+	//S().Debug("main")
+	Debug("main")
+	Debug2("main")
+	L().Debug("main")
 
 	// Output:
 }
+
