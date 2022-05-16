@@ -41,6 +41,17 @@ func ExampleL() {
 
 	// S() test
 	Debug("S().Debug")
+	Debugf("S().%v", "Debugf")
 	Info("S().Info")
+	Infof("S().%v", "Infof")
+	Warn("S().%v", "Warn")
+	Warnf("S().%v", "Warnf")
+	Error("S().Error")
+	Errorf("S().%v", "Errorf")
+	DPanic("S().DPanic")
+	DPanicf("S().%v", "DPanicf")
+	Fatal("S().Fatal")
+	Fatalf("S().%v", "Fatalf")
+
 	// Output:
 }
