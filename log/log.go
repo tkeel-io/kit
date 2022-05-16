@@ -22,6 +22,63 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// zap.S() func
+var (
+	Debug   func(args ...interface{})
+	Debugf  func(templateStr string, args ...interface{})
+	Debugw  func(msg string, keysAndValues ...interface{})
+	Info    func(args ...interface{})
+	Infof   func(templateStr string, args ...interface{})
+	Infow   func(msg string, keysAndValues ...interface{})
+	Warn    func(args ...interface{})
+	Warnf   func(templateStr string, args ...interface{})
+	Warnw   func(msg string, keysAndValues ...interface{})
+	Error   func(args ...interface{})
+	Errorf  func(templateStr string, args ...interface{})
+	Errorw  func(msg string, keysAndValues ...interface{})
+	DPanic  func(args ...interface{})
+	DPanicf func(templateStr string, args ...interface{})
+	DPanicw func(msg string, keysAndValues ...interface{})
+	Panic   func(args ...interface{})
+	Panicf  func(templateStr string, args ...interface{})
+	Panicw  func(msg string, keysAndValues ...interface{})
+	Fatal   func(args ...interface{})
+	Fatalf  func(templateStr string, args ...interface{})
+	Fatalw  func(msg string, keysAndValues ...interface{})
+)
+
+func init() {
+	globalLogger, _ := zap.NewDevelopment()
+	zap.ReplaceGlobals(globalLogger)
+	syncLogS()
+}
+
+// syncLogS global logger sync
+func syncLogS() {
+	globalS := zap.S()
+	Debug = globalS.Debug
+	Debugf = globalS.Debugf
+	Debugw = globalS.Debugw
+	Info = globalS.Info
+	Infof = globalS.Infof
+	Infow = globalS.Infow
+	Warn = globalS.Warn
+	Warnf = globalS.Warnf
+	Warnw = globalS.Warnw
+	Error = globalS.Error
+	Errorf = globalS.Errorf
+	Errorw = globalS.Errorw
+	DPanic = globalS.DPanic
+	DPanicf = globalS.DPanicf
+	DPanicw = globalS.DPanicw
+	Panic = globalS.Panic
+	Panicf = globalS.Panicf
+	Panicw = globalS.Panicw
+	Fatal = globalS.Fatal
+	Fatalf = globalS.Fatalf
+	Fatalw = globalS.Fatalw
+}
+
 type Conf struct {
 	App    string
 	Level  string
@@ -63,6 +120,7 @@ func InitLogger(app string, level string, dev bool, output ...string) error {
 		return fmt.Errorf("error build zap log: %w", err)
 	}
 	resetGlobalFunc = zap.ReplaceGlobals(logger)
+	syncLogS()
 	return nil
 }
 
@@ -91,90 +149,6 @@ func getLevel(level string) zap.AtomicLevel {
 		return zap.NewAtomicLevelAt(zapcore.FatalLevel)
 	}
 	return zap.NewAtomicLevelAt(zapcore.InfoLevel)
-}
-
-func Debug(args ...interface{}) {
-	zap.S().Debug(args...)
-}
-
-func Debugf(templateStr string, args ...interface{}) {
-	zap.S().Debugf(templateStr, args...)
-}
-
-func Debugw(msg string, keysAndValues ...interface{}) {
-	zap.S().Debugw(msg, keysAndValues...)
-}
-
-func Info(args ...interface{}) {
-	zap.S().Info(args...)
-}
-
-func Infof(templateStr string, args ...interface{}) {
-	zap.S().Infof(templateStr, args...)
-}
-
-func Infow(msg string, keysAndValues ...interface{}) {
-	zap.S().Infow(msg, keysAndValues...)
-}
-
-func Warn(args ...interface{}) {
-	zap.S().Warn(args...)
-}
-
-func Warnf(templateStr string, args ...interface{}) {
-	zap.S().Warnf(templateStr, args...)
-}
-
-func Warnw(msg string, keysAndValues ...interface{}) {
-	zap.S().Warnw(msg, keysAndValues...)
-}
-
-func Error(args ...interface{}) {
-	zap.S().Error(args...)
-}
-
-func Errorf(templateStr string, args ...interface{}) {
-	zap.S().Errorf(templateStr, args...)
-}
-
-func Errorw(msg string, keysAndValues ...interface{}) {
-	zap.S().Errorw(msg, keysAndValues...)
-}
-
-func DPanic(args ...interface{}) {
-	zap.S().DPanic(args...)
-}
-
-func DPanicf(templateStr string, args ...interface{}) {
-	zap.S().DPanicf(templateStr, args...)
-}
-
-func DPanicw(msg string, keysAndValues ...interface{}) {
-	zap.S().DPanicw(msg, keysAndValues...)
-}
-
-func Panic(args ...interface{}) {
-	zap.S().Panic(args...)
-}
-
-func Panicf(templateStr string, args ...interface{}) {
-	zap.S().Panicf(templateStr, args...)
-}
-
-func Panicw(msg string, keysAndValues ...interface{}) {
-	zap.S().Panicw(msg, keysAndValues...)
-}
-
-func Fatal(args ...interface{}) {
-	zap.S().Fatal(args...)
-}
-
-func Fatalf(templateStr string, args ...interface{}) {
-	zap.S().Fatalf(templateStr, args...)
-}
-
-func Fatalw(msg string, keysAndValues ...interface{}) {
-	zap.S().Fatalw(msg, keysAndValues...)
 }
 
 func Check(lvl zapcore.Level, msg string) *zapcore.CheckedEntry {
