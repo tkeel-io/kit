@@ -28,6 +28,10 @@ func b() {
 
 func c() {
 	L().Debug("c")
+
+	// S() test
+	Debug("S().Debug c()")
+	Info("S().Info c()")
 }
 
 func ExampleL() {
@@ -35,5 +39,8 @@ func ExampleL() {
 	L().Debug("main")
 	a()
 
+	// S() test
+	Debug("S().Debug")
+	Info("S().Info")
 	// Output:
 }

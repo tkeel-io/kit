@@ -38,6 +38,27 @@ func ResetGlobalLogger() {
 	}
 }
 
+var Debug func(args ...interface{})
+var Info func(args ...interface{})
+
+func init() {
+	SyncLogS(true)
+}
+
+// SyncLogS global logger sync
+func SyncLogS(isDefault bool) {
+	var globalS *zap.SugaredLogger
+	if isDefault {
+		globalLogger, _ := zap.NewDevelopment()
+		globalS = globalLogger.Sugar()
+	} else {
+		globalS = zap.S()
+	}
+
+	Debug = globalS.Debug
+	Info = globalS.Info
+}
+
 // InitLogger create new zap logger and sugared logger.
 // replace global logger.
 func InitLogger(app string, level string, dev bool, output ...string) error {
@@ -63,6 +84,7 @@ func InitLogger(app string, level string, dev bool, output ...string) error {
 		return fmt.Errorf("error build zap log: %w", err)
 	}
 	resetGlobalFunc = zap.ReplaceGlobals(logger)
+	SyncLogS(false)
 	return nil
 }
 
@@ -93,9 +115,9 @@ func getLevel(level string) zap.AtomicLevel {
 	return zap.NewAtomicLevelAt(zapcore.InfoLevel)
 }
 
-func Debug(args ...interface{}) {
-	zap.S().Debug(args...)
-}
+//func Debug(args ...interface{}) {
+//	zap.S().Debug(args...)
+//}
 
 func Debugf(templateStr string, args ...interface{}) {
 	zap.S().Debugf(templateStr, args...)
@@ -105,9 +127,9 @@ func Debugw(msg string, keysAndValues ...interface{}) {
 	zap.S().Debugw(msg, keysAndValues...)
 }
 
-func Info(args ...interface{}) {
-	zap.S().Info(args...)
-}
+//func Info(args ...interface{}) {
+//	zap.S().Info(args...)
+//}
 
 func Infof(templateStr string, args ...interface{}) {
 	zap.S().Infof(templateStr, args...)
