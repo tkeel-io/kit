@@ -1,12 +1,13 @@
 package config
 
 type InstallConfig struct {
-	Namespace  string      `json:"namespace" yaml:"namespace"`
-	Repo       *Repo       `json:"repo" yaml:"repo"`
-	Host       *Host       `json:"host" yaml:"host"`
-	Port       string      `json:"port" yaml:"port"`
-	Middleware *Middleware `json:"middleware" yaml:"middleware"`
-	Plugins    []string    `json:"plugins" yaml:"plugins"`
+	Namespace   string      `json:"namespace" yaml:"namespace"`
+	Repo        *Repo       `json:"repo" yaml:"repo"`
+	Host        *Host       `json:"host" yaml:"host"`
+	Port        string      `json:"port" yaml:"port"`
+	Middleware  *Middleware `json:"middleware" yaml:"middleware"`
+	Plugins     []string    `json:"plugins" yaml:"plugins"`
+	ImagePolicy string      `json:"image_policy" yaml:"image_policy"`
 }
 
 type Repo struct {
