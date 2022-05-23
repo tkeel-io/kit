@@ -2,9 +2,12 @@ package auth
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/tkeel-io/kit"
@@ -13,21 +16,33 @@ import (
 )
 
 const (
-	AuthTokenURLTestRemote string = "http://192.168.123.9:30707/apis/security/v1/oauth/authenticate"
-	AuthTokenURLInvoke     string = "http://localhost:3500/v1.0/invoke/keel/method/apis/security/v1/oauth/authenticate"
+	TestRemote   = "http://192.168.123.9:30707/apis/security/v1/oauth/authenticate"
+	InvokeRemote = "http://localhost:3500/v1.0/invoke/keel/method/apis/security/v1/oauth/authenticate"
 
-	_Authorization string = "Authorization"
+	_Authorization        = "Authorization"
+	_XtKeelAuthUserHeader = "X-Tkeel-Auth"
 )
 
-var _auth = AuthTokenURLInvoke
+var _auth = InvokeRemote
+
+var (
+	ErrAuthorizationNotFound = errors.New("authorization info not found")
+)
 
 type User struct {
+	ID     string `json:"id"`
+	Role   string `json:"role"`
+	Tenant string `json:"tenant"`
+	Token  string `json:"token"`
+}
+
+type Authorization struct {
 	ID       string `json:"id"`
 	TenantID string `json:"tenant_id"`
 	Token    string `json:"token"`
 }
 
-func Authenticate(token interface{}, urls ...string) (*User, error) {
+func Authenticate(token interface{}, urls ...string) (*Authorization, error) {
 	if len(urls) > 0 {
 		_auth = urls[0]
 	}
@@ -92,11 +107,39 @@ func Authenticate(token interface{}, urls ...string) (*User, error) {
 		return nil, errors.New("parse token tenant_id data error")
 	}
 
-	return &User{
+	return &Authorization{
 		ID:       id,
 		TenantID: tenantId,
 		Token:    tokenStr,
 	}, nil
+}
+
+func GetUser(ctx context.Context) (User, error) {
+	u := User{}
+	headers := transportHTTP.HeaderFromContext(ctx)
+	authHTTPHeader, ok := headers[_XtKeelAuthUserHeader]
+	if !ok {
+		return u, ErrAuthorizationNotFound
+	}
+	authInfo := strings.Join(authHTTPHeader, "")
+	authStrBytes, err := base64.StdEncoding.DecodeString(authInfo)
+	if err != nil {
+		err = errors.Wrap(err, "decode auth header error")
+		return u, err
+	}
+	q, err := url.ParseQuery(string(authStrBytes))
+	if err != nil {
+		err = errors.Wrap(err, "parse auth header error")
+		return u, err
+	}
+	u.ID = q.Get("user")
+	u.Role = q.Get("role")
+	u.Tenant = q.Get("tenant")
+	token, ok := headers[_Authorization]
+	if ok {
+		u.Token = strings.Join(token, "")
+	}
+	return u, nil
 }
 
 func getBody(resp *http.Response) ([]byte, error) {
