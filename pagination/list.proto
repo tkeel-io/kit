@@ -1,0 +1,74 @@
+syntax = "proto3";
+package api.subscribe.v1;
+option go_package = "github.com/tkeel-io/core-broker/api/subscribe/v1;v1";
+
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/api/field_behavior.proto";
+
+message ListRequest{
+	int32 page_num = 1
+		[(google.api.field_behavior) = REQUIRED,
+			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+			description: "Page number",
+		}];
+	int32 page_size = 2
+		[(google.api.field_behavior) = REQUIRED,
+			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+			description: "Page size",
+		}];
+	string order_by = 3
+		[(google.api.field_behavior) = OPTIONAL,
+			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+			description: "Order by",
+		}];
+	bool is_descending = 4
+		[(google.api.field_behavior) = OPTIONAL,
+			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+			description: "Is descending",
+		}];
+	string key_words = 5
+		[(google.api.field_behavior) = OPTIONAL,
+			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+			description: "Key words",
+		}];
+	string search_key = 6
+		[(google.api.field_behavior) = OPTIONAL,
+			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+			description: "Search Key"
+			}];
+	//user define
+	int64 packet_id = 10
+		[(google.api.field_behavior) = OPTIONAL,
+			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+			description: "Packet ID"
+			}];
+}
+
+message ListResponse {
+	uint64 total = 1
+		[(google.api.field_behavior) = REQUIRED,
+			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+			description: "Total",
+			}];
+	int32 page_num = 2
+		[(google.api.field_behavior) = REQUIRED,
+			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+			description: "Page number",
+			}];
+	uint64 last_page = 3
+			[(google.api.field_behavior) = REQUIRED,
+				(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+				description: "Last page",
+				}];
+	int32 page_size = 4
+		[(google.api.field_behavior) = REQUIRED,
+			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+			description: "Page size",
+			}];
+	//user define
+	uint64 packet_id = 10
+		[(google.api.field_behavior) = OPTIONAL,
+			(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+			description: "Packet ID"
+			}];
+}
